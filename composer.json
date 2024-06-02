@@ -1,0 +1,19 @@
+{
+    "name": "adeiskandar/barcode-generator",
+    "description": "generator",
+    "type": "project",
+    "require": {
+        "mpdf/mpdf": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Adeiskandar\\BarcodeGenerator\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ade",
+            "email": "ade@nusa.net.id"
+        }
+    ]
+}

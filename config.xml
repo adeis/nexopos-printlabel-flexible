@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<module>
+    <namespace>BarcodeGenerator</namespace>
+    <version>1.0</version>
+    <author>Ade Iskandar</author>
+    <name>Product Barcode &amp; Generator</name>
+    <description>Generate Barcode and print, customize paper, size and print mode</description>
+</module>
