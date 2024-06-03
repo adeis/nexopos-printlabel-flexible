@@ -17,7 +17,7 @@
 		</ns-print-label>
 		*/
 		?>
-		<form action="">
+		<form action="" name="form" id="form">
 
 
 		<div class="row">
@@ -34,6 +34,25 @@
 						</optgroup>	
 					@endforeach
 				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2 col-sm-1">{{__('Orientation')}}</div>
+			<div class="col-md-10 col-sm-11">
+				<select name="orientation" id="orientation">
+					<option value="P">{{__('Portrait')}}</option>
+					<option value="L">{{__('Landscape')}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2 col-sm-1">{{__('Page Margin')}}</div>
+			<div class="col-md-10 col-sm-11">
+				<input type="number" placeholder="{{__('left')}}" name="page_margin_left" id="page_margin_left" value="1"> 
+				<input type="number" placeholder="{{__('right')}}" name="page_margin_right" id="page_margin_right" value="1"> 
+				<input type="number" placeholder="{{__('top')}}" name="page_margin_top" id="page_margin_top" value="1"> 
+				<input type="number" placeholder="{{__('bottom')}}" name="page_margin_bottom" id="page_margin_bottom" value="1"> 
+				mm
 			</div>
 		</div>
 		<div class="row">
@@ -56,7 +75,7 @@
 			<div class="col-md-2 col-sm-1">{{__('Barcode Size')}}</div>
 			<div class="col-md-10 col-sm-11">
 				<input type="number" name="barcode_width" id="barcode_width" value="33"> x 
-				<input type="number" name="barcode_height" id="barcode_height" value="15"> 
+				<input type="number" name="barcode_height" id="barcode_height" value="19"> 
 				mm
 			</div>
 		</div>
@@ -85,7 +104,8 @@
 		</div>
 		<div class="row">
 			<div class="col-md-2">
-				<button id="btn-print" target="_blank" name="btn" value="preview" class="btn btn-primary">{{__('Preview')}}</button>
+				<button id="btn-preview" target="_blank" name="btn" value="preview" class="btn btn-primary">{{__('Preview')}}</button>
+				<button id="btn-print" target="_blank" name="btn" value="print" class="btn btn-primary">{{__('Print')}}</button>
 			</div>
 		</div>
 	</div>
@@ -102,6 +122,16 @@
 	$(document).ready(function() { 
 		$(".select2").select2(); 
 		$("#page-size").select2(); 
+		var preview = $("#btn-preview");
+		preview.on("click", function() {
+			// get form serialize
+
+			var form = $("#form");
+			var formSerialize = form.serialize();
+			
+			window.open("{{ route('bc.print-labels') }}?"+formSerialize, "_blank");
+		})
+		var print = $("#btn-print");
 	});
 </script>
 @endsection

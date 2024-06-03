@@ -81,13 +81,16 @@ class MainController extends DashboardController
         $options = [
             'format' => $format,
             'orientation' => $orientation,
-            'margin_left' => 1,
-            'margin_right' => 1,
-            'margin_top' => 1,
-            'margin_bottom' => 1,
+            'margin_left' => (int) $request->get('page_margin_left', 1),
+            'margin_right' => (int) $request->get('page_margin_right', 1),
+            'margin_top' => (int) $request->get('page_margin_top', 1),
+            'margin_bottom' => (int) $request->get('page_margin_bottom', 1),
         ];
+        $barcodeHeight = (int) $request->get('barcode_height', 19);
+        $barcodeWidth = (int) $request->get('barcode_width', 33);
         $mpdf = new Mpdf($options);
-
+        // dump($options);
+        // dd($request->all());
 
         //$mpdf->WriteHTML('Hello World');
 
@@ -158,7 +161,7 @@ class MainController extends DashboardController
                     $code = $barcodes[$index];
                     $barcodeType = $this->determineBarcodeType($code);
                     // Tambahkan barcode di sini, sebagai contoh menggunakan teks sebagai placeholder
-                    $html .= '<td style="text-align:center;padding: 5mm 0 5mm 0; margin: 0; vertical-align: top; color: #000044;">';
+                    $html .= '<td  style="text-align: center; height: '.$barcodeHeight.'mm; width: '.$barcodeWidth.'mm; padding: 1mm;"> <div class="box-barcode" style="">';
                     $html .= '<small>';
                     if(in_array('name', $barcodeView)) {
                         $name = $barcodeNames[$index];
@@ -173,7 +176,7 @@ class MainController extends DashboardController
                     $html .= '<br><small>';
                     $html .= "$code";
                     $html .= '</small><br>';
-                    $html .= '</td>';
+                    $html .= '</div></td>';
                 } else {
                     $html .= '<td></td>'; // Jika tidak ada barcode, tambahkan sel kosong
                 }
