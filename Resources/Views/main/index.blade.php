@@ -112,12 +112,22 @@
 	</form>
 </div>
 </div>
+
+<!-- modal -->
+
+<div id="dialog">
+	<iframe src="" id="modal-iframe" frameborder="0" width="100%" height="100%"></iframe>
+</div>
+<!-- end modal -->
 @endsection
 @section('layout.dashboard.header')
 <script src="{{ asset('modules/barcodegenerator/jquery-1.7.1.min.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('modules/barcodegenerator/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('modules/barcodegenerator/mini-default.css') }}">
+<link rel="stylesheet" href="{{ asset('modules/barcodegenerator/jquery-ui/jquery-ui.min.css') }}">
+<link rel="stylesheet" href="{{ asset('modules/barcodegenerator/jquery-ui/jquery-ui.theme.css') }}">
 <script src="{{ asset('modules/barcodegenerator/select2/js/select2.full.min.js') }}"></script>
+<script src="{{ asset('modules/barcodegenerator/jquery-ui/jquery-ui.min.js') }}"></script>
 <script>
 	$(document).ready(function() { 
 		$(".select2").select2(); 
@@ -125,11 +135,31 @@
 		var preview = $("#btn-preview");
 		preview.on("click", function() {
 			// get form serialize
-
 			var form = $("#form");
 			var formSerialize = form.serialize();
-			
-			window.open("{{ route('bc.print-labels') }}?"+formSerialize, "_blank");
+			formSerialize += "&btn=preview";
+			$('#modal-iframe').attr('src', "{{ route('bc.print-labels') }}?"+formSerialize);
+			$("#dialog").dialog({
+				title: "{{__('Preview')}}",
+				height: $(window).height(),
+				width: "90%",
+				modal:true,
+				draggable: false,
+				buttons: [
+					{
+					text: "Ok",
+					click: function() {
+						$( this ).dialog( "close" );
+					}
+					}
+				]
+			});
+			//return preventDefault();
+			//window.open("{{ route('bc.print-labels') }}?"+formSerialize, "_blank");
+
+			//cancel form submit
+			return false;
+
 		})
 		var print = $("#btn-print");
 	});
