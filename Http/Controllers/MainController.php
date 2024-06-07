@@ -47,6 +47,9 @@ class MainController extends DashboardController
         if($request->get('btn') == 'preview') {
             return $this->setPdf($request);
         }
+        if($request->get('btn') == 'print') {
+            return $this->setPdf($request);
+        }
 
         $products = $this->products();
 
@@ -67,7 +70,6 @@ class MainController extends DashboardController
 
     protected function setPdf($request)
     {
-
         $options = [];
         $size = $request->get('page-size', '190-236');
         $format = explode('-', $size);
@@ -76,6 +78,13 @@ class MainController extends DashboardController
             $productIds = $request->get('products');
         } else {
             $productIds = explode(',', $request->get('products', ''));
+        }
+        $isCustomSize = $request->get('size_page_custom', "off") == 'on';
+        if($isCustomSize) {
+            $format = [
+                $request->get('custom_page_width', "190"),
+                $request->get('custom_page_height', "236"),
+            ];
         }
         $total = $request->get('total', 1);
         $options = [
@@ -86,13 +95,12 @@ class MainController extends DashboardController
             'margin_top' => (int) $request->get('page_margin_top', 1),
             'margin_bottom' => (int) $request->get('page_margin_bottom', 1),
         ];
-        $barcodeHeight = (int) $request->get('barcode_height', 19);
-        $barcodeWidth = (int) $request->get('barcode_width', 33);
+        $barcodeHeight = (float) $request->get('barcode_height', 19);
+        $barcodeWidth = (float) $request->get('barcode_width', 33);
+        $barcodeMargin = (float) $request->get('barcode_margin', 1);
+        $barcodeHeight = $barcodeHeight + $barcodeMargin;
+        $barcodeWidth = $barcodeWidth + $barcodeMargin;
         $mpdf = new Mpdf($options);
-        // dump($options);
-        // dd($request->all());
-
-        //$mpdf->WriteHTML('Hello World');
 
         //$mpdf->AddPage('L'); // Adds a new page in Landscape orientation
         $listProducts = Product::whereIn('id', $productIds)->get();
@@ -145,10 +153,27 @@ class MainController extends DashboardController
 
         // Hitung jumlah baris yang dibutuhkan
         $rows = ceil($totalBarcodes / $columns);
+        $isBtnPreview = $request->get('btn', "") == 'preview';
+        $isBtnPrint = $request->get('btn', "") == 'print';
+        $borderColor = "#cccccc";
+        if($isBtnPreview) {
+            $borderColor = "#cccccc";
+        }
+        if($isBtnPrint) {
+            $borderColor = "#ffffff";
+        }
+        $html = "
+        <style>
+        table, th, td {
+            border: ".$barcodeMargin."mm solid $borderColor;
+            border-collapse: collapse;
+          }
+        </style>";
 
-        $html = '<table border="1" cellspacing="0" cellpadding="2"  style="border-collapse: collapse;">';
+        $html .= '<table>';
 
         // Loop untuk baris
+
         for ($i = 0; $i < $rows; $i++) {
             $html .= '<tr>';
 
@@ -161,7 +186,7 @@ class MainController extends DashboardController
                     $code = $barcodes[$index];
                     $barcodeType = $this->determineBarcodeType($code);
                     // Tambahkan barcode di sini, sebagai contoh menggunakan teks sebagai placeholder
-                    $html .= '<td  style="text-align: center; height: '.$barcodeHeight.'mm; width: '.$barcodeWidth.'mm; padding: 1mm;"> <div class="box-barcode" style="">';
+                    $html .= '<td  style="text-align: center; height: '.$barcodeHeight.'mm; width: '.$barcodeWidth.'mm; padding: '.$barcodeMargin.'mm;"> <div class="box-barcode" style="">';
                     $html .= '<small>';
                     if(in_array('name', $barcodeView)) {
                         $name = $barcodeNames[$index];
@@ -186,10 +211,12 @@ class MainController extends DashboardController
         }
 
         $html .= '</table>';
+        //echo $html; exit;
 
         $mpdf->WriteHTML($html);
 
-        $mpdf->Output();
+        $namePdf = "barcode".date('YmdHis').".pdf";
+        $mpdf->Output($namePdf, 'I');
     }
 
 

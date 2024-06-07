@@ -22,7 +22,7 @@
 
 		<div class="row">
 			<div class="col-md-2 col-sm-1">{{__('Page Size')}}</div>
-			<div class="col-md-10 col-sm-11">
+			<div class="col-md-3 col-sm-3">
 				<select id="page-size" name="page-size">
 					@foreach( $commondPaperSizes as $group => $sizes )
 						<optgroup label="{{ $group }}">
@@ -34,6 +34,16 @@
 						</optgroup>	
 					@endforeach
 				</select>
+			</div>
+			<div class="col-md-7 col-sm-7">
+					<label for="size_page_custom">
+						<input class="form-control" type="checkbox" name="size_page_custom" id="size_page_custom">
+						{{__('Custom')}}
+					</label>
+					<input type="text" name="custom_page_width" class="custom_size" id="custom_page_width" placeholder="{{__('width')}}"> 
+					<span class="custom_size">x</span> 
+					<input type="text" name="custom_page_height" class="custom_size" id="custom_page_height" placeholder="{{__('height')}}">
+					<span class="custom_size">mm</span>
 			</div>
 		</div>
 		<div class="row">
@@ -48,10 +58,10 @@
 		<div class="row">
 			<div class="col-md-2 col-sm-1">{{__('Page Margin')}}</div>
 			<div class="col-md-10 col-sm-11">
-				<input type="number" placeholder="{{__('left')}}" name="page_margin_left" id="page_margin_left" value="1"> 
-				<input type="number" placeholder="{{__('right')}}" name="page_margin_right" id="page_margin_right" value="1"> 
-				<input type="number" placeholder="{{__('top')}}" name="page_margin_top" id="page_margin_top" value="1"> 
-				<input type="number" placeholder="{{__('bottom')}}" name="page_margin_bottom" id="page_margin_bottom" value="1"> 
+				<input type="text" class="number" placeholder="{{__('left')}}" name="page_margin_left" id="page_margin_left" value="1"> 
+				<input type="text" class="number" placeholder="{{__('right')}}" name="page_margin_right" id="page_margin_right" value="1"> 
+				<input type="text" class="number" placeholder="{{__('top')}}" name="page_margin_top" id="page_margin_top" value="1"> 
+				<input type="text" class="number" placeholder="{{__('bottom')}}" name="page_margin_bottom" id="page_margin_bottom" value="1"> 
 				mm
 			</div>
 		</div>
@@ -132,6 +142,32 @@
 	$(document).ready(function() { 
 		$(".select2").select2(); 
 		$("#page-size").select2(); 
+
+		$(".custom_size").hide();
+		$("#size_page_custom").on("change", function() {
+			//if checkbox check 
+			if($(this).is(":checked")) {
+				$(".custom_size").show();
+				$("#page_size").attr('disabled', false);
+			}else{
+				$(".custom_size").hide();
+				$("page_size").removeAttr('disabled');
+			}
+			
+		});
+
+		// jika ada class number, maka hanya terima input [1-9] dan "."
+		$(".number").keyup(function (e) {
+			var regex = /^\d*\.?\d*$/;
+			if (!regex.test(this.value)) {
+				this.value = this.value.slice(0, -1);
+			}
+			/*
+			if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+				return false;
+			}
+				*/
+		});
 		var preview = $("#btn-preview");
 		preview.on("click", function() {
 			// get form serialize
