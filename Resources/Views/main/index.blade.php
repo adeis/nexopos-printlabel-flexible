@@ -58,47 +58,51 @@
 		<div class="row">
 			<div class="col-md-2 col-sm-1">{{__('Page Margin')}}</div>
 			<div class="col-md-10 col-sm-11">
-				<input type="text" class="number" placeholder="{{__('left')}}" name="page_margin_left" id="page_margin_left" value="1"> 
-				<input type="text" class="number" placeholder="{{__('right')}}" name="page_margin_right" id="page_margin_right" value="1"> 
-				<input type="text" class="number" placeholder="{{__('top')}}" name="page_margin_top" id="page_margin_top" value="1"> 
-				<input type="text" class="number" placeholder="{{__('bottom')}}" name="page_margin_bottom" id="page_margin_bottom" value="1"> 
+				<input type="text" class="number" placeholder="{{__('left')}}" name="page_margin_left" id="page_margin_left" value="1">
+				<input type="text" class="number" placeholder="{{__('top')}}" name="page_margin_top" id="page_margin_top" value="1">
+				<input type="text" class="number" placeholder="{{__('right')}}" name="page_margin_right" id="page_margin_right" value="1">
+				<input type="text" class="number" placeholder="{{__('bottom')}}" name="page_margin_bottom" id="page_margin_bottom" value="1">
 				mm
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-2 col-sm-1">{{__('Products')}}</div>
-			<div class="col-md-10 col-sm-11">
-				<select name="products[]" id="products" required class="select2" multiple style="width: 100%">
-					@foreach($products as $product)
-					<option value="{{ $product->id }}">{{ $product->name }}</option>
-					@endforeach
-				</select>
+			<div class="col-md-10 col-sm-5">
+				<table class="t-product" style="width:100%; background-color:none">
+
+				</table>
 			</div>
 		</div>
 		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8 btn-clone">
+					<button class="btn" id="add-products">+</button>
+			</div>
+		</div>
+		<div class="row" style="display: none">
 			<div class="col-md-2 col-sm-1">{{__('Barcode Total')}}</div>
 			<div class="col-md-10 col-sm-11">
-				<input type="number" name="total" id="total" value="10">
+				<input type="number" name="total" id="total" value="84">
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-2 col-sm-1">{{__('Barcode Size')}}</div>
 			<div class="col-md-10 col-sm-11">
-				<input type="number" name="barcode_width" id="barcode_width" value="33"> x 
-				<input type="number" name="barcode_height" id="barcode_height" value="19"> 
+				<input type="text" class="number" name="barcode_width" id="barcode_width" value="32"> x
+				<input type="text" class="number" name="barcode_height" id="barcode_height" value="26.5">
 				mm
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-2 col-sm-1">{{__('Barcode Margin')}}</div>
 			<div class="col-md-10 col-sm-11">
-				<input type="number" name="barcode_margin" id="barcode_margin" value="1"> mm
+				<input type="number" name="barcode_margin" id="barcode_margin" value="2"> mm
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-2 col-sm-1">{{__('Column Total')}}</div>
 			<div class="col-md-10 col-sm-11">
-				<input type="number" name="column" id="column" value="3">
+				<input type="number" name="column" id="column" value="6">
 			</div>
 		</div>
 		<div class="row">
@@ -106,8 +110,8 @@
 			<div class="col-md-10 col-sm-11">
 				<select name="barcode_view[]" id="barcode_view" class="select2" style="width: 100%" multiple>
 					<option value="code" selected>{{__('Code')}}</option>
-					<option value="name">{{__('Name')}}</option>
-					<option value="price">{{__('Price')}}</option>
+					<option value="name" selected>{{__('Name')}}</option>
+					<option value="price" selected>{{__('Price')}}</option>
 					<option value="store_name">{{__('Store Name')}}</option>
 				</select>
 			</div>
@@ -122,13 +126,36 @@
 	</form>
 </div>
 </div>
-
+<!-- Template untuk row produk -->
+<template id="product-template">
+    <tr class="row-product">
+        <td>
+            <input type="hidden" name="products[]" class="product-id">
+            <span class="product-name"></span>
+        </td>
+        <td>
+            <input type="number" placeholder="{{__('Total')}}" class="number" name="products_totals[]">
+            <button class="btn remove-product" style="background-color: rgb(233, 174, 174)">x</button>
+        </td>
+    </tr>
+</template>
 <!-- modal -->
 
 <div id="dialog">
 	<iframe src="" id="modal-iframe" frameborder="0" width="100%" height="100%"></iframe>
 </div>
+
 <!-- end modal -->
+<!-- Modal untuk memilih produk -->
+<div id="productModal" title="{{__('Select a Product')}}">
+    <select id="productSelect" class="select2" style="width: 100%">
+        <option value="">{{ __('Select a product') }}</option>
+        @foreach($products as $product)
+        <option value="{{ $product->id }}">{{ $product->name }}</option>
+        @endforeach
+    </select>
+    <button id="selectProductButton">{{ __('Add Product') }}</button>
+</div>
 @endsection
 @section('layout.dashboard.header')
 <script src="{{ asset('modules/barcodegenerator/jquery-1.7.1.min.js') }}"></script>
@@ -136,6 +163,31 @@
 <link rel="stylesheet" href="{{ asset('modules/barcodegenerator/mini-default.css') }}">
 <link rel="stylesheet" href="{{ asset('modules/barcodegenerator/jquery-ui/jquery-ui.min.css') }}">
 <link rel="stylesheet" href="{{ asset('modules/barcodegenerator/jquery-ui/jquery-ui.theme.css') }}">
+<style>
+  .select3 {
+  box-sizing: border-box;
+  background: var(--input-back-color);
+  color: var(--input-fore-color);
+  border: 0.0625rem solid var(--input-border-color);
+  border-radius: var(--universal-border-radius);
+  margin: calc(var(--universal-margin) / 2);
+  padding: var(--universal-padding) calc(1.5 * var(--universal-padding));
+}
+.select2-container .select2-selection--single {
+	height: 38px;
+	margin-top:6px;
+	margin-left: 4px;
+}
+.btn-clone {
+    margin-top: -18px;
+    margin-left: -4px;
+}
+table.t-product td {
+	border: none;
+	background:none;
+	padding: 0px;
+}
+</style>
 <script src="{{ asset('modules/barcodegenerator/select2/js/select2.full.min.js') }}"></script>
 <script src="{{ asset('modules/barcodegenerator/jquery-ui/jquery-ui.min.js') }}"></script>
 <script>
@@ -155,6 +207,44 @@
 			}
 			
 		});
+
+		// Inisialisasi modal jQuery UI
+        $("#productModal").dialog({
+            autoOpen: false,
+            modal: true,
+            width: 400,
+            height: 300
+        });
+
+        // Buka modal saat tombol diklik
+        $('#add-products').click(function(e) {
+            e.preventDefault();
+            $('#productModal').dialog('open');
+        });
+
+        // Tambahkan produk ke tabel
+        $('#selectProductButton').click(function() {
+            var selectedProduct = $('#productSelect').find(":selected");
+            var productId = selectedProduct.val();
+            var productName = selectedProduct.text();
+
+            if (productId) {
+                var template = $('#product-template').html();
+                var newRow = $(template);
+
+                newRow.find('.product-id').val(productId);
+                newRow.find('.product-name').text(productName);
+
+                $('.t-product').append(newRow);
+                $('#productModal').dialog('close');
+                $('#productSelect').val(null).trigger('change');
+            }
+        });
+
+		 // Hapus produk dari tabel
+		 $(document).on('click', '.remove-product', function() {
+            $(this).closest('tr').remove();
+        });
 
 		// jika ada class number, maka hanya terima input [1-9] dan "."
 		$(".number").keyup(function (e) {

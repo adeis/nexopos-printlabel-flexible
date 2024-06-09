@@ -86,7 +86,6 @@ class MainController extends DashboardController
                 $request->get('custom_page_height', "236"),
             ];
         }
-        $total = $request->get('total', 1);
         $options = [
             'format' => $format,
             'orientation' => $orientation,
@@ -105,8 +104,12 @@ class MainController extends DashboardController
         //$mpdf->AddPage('L'); // Adds a new page in Landscape orientation
         $listProducts = Product::whereIn('id', $productIds)->get();
         $products = [];
+        $productsTotal = $request->get('products_totals', []);
+        $i = 0;
         foreach($listProducts as $dt) {
             $products[$dt->id]["product"] = $dt->toArray();
+            $products[$dt->id]["product"]["total"] = $productsTotal[$i] ?? 1;
+            $i++;
         }
         $barcodeView = $request->get('barcode_view', []);
 
@@ -122,8 +125,8 @@ class MainController extends DashboardController
         $barcodeTypes = [];
         $barcodeNames = [];
         $barcodePrices = [];
-        //dd($products);
         foreach($products as $product) {
+            $total = $product["product"]["total"];
             for($i = 0; $i < $total; $i++) {
                 $barcodes[] = $product["product"]["barcode"];
                 $bTypes = strtoupper($product["product"]["barcode_type"] ?? 'C128B');
@@ -190,7 +193,7 @@ class MainController extends DashboardController
                     $html .= '<small>';
                     if(in_array('name', $barcodeView)) {
                         $name = $barcodeNames[$index];
-                        $html .= "$name";
+                        $html .= "$name <br>";
                     }
                     if(in_array('price', $barcodeView)) {
                         $price = $barcodePrices[$index];
