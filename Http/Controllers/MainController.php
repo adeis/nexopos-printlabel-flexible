@@ -105,18 +105,10 @@ class MainController extends DashboardController
         $listProducts = Product::whereIn('id', $productIds)->get();
         $products = [];
         $productsTotal = $request->get('products_totals', []);
-        $i = 0;
-        $tmpProducts = [];
+
         foreach($listProducts as $dt) {
-            if(isset($dt->id)) {
-                $tmpProducts[$i]["product"] = $dt->toArray();
-                $tmpProducts[$i]["product"]["total"] = $productsTotal[$i] ?? 1;
-                $i++;
-            }
-        }
-        // satukan kembali product setelah dicarikan totalnya
-        foreach($tmpProducts as $dt) {
-            $products[$dt["product"]["id"]] = $dt;
+            $products[$dt["id"]]["product"] = $dt->toArray();
+            $products[$dt["id"]]["product"]["total"] = $productsTotal[$dt["id"]] ?? 1;
         }
         $barcodeView = $request->get('barcode_view', []);
 

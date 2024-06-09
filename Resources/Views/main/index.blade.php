@@ -134,7 +134,7 @@
             <span class="product-name"></span>
         </td>
         <td>
-            <input type="number" required placeholder="{{__('Total')}}" class="number" value="1" name="products_totals[]">
+            <input type="number" required placeholder="{{__('Total')}}" class="number product-total" value="1" name="products_totals[]">
             <button class="btn remove-product" style="background-color: rgb(233, 174, 174)">x</button>
         </td>
     </tr>
@@ -233,6 +233,8 @@ table.t-product td {
                 var newRow = $(template);
 
                 newRow.find('.product-id').val(productId);
+                newRow.find('.product-id').attr('name', "products["+productId+"]");
+				newRow.find('.product-total').attr('name', "products_totals["+productId+"]");
                 newRow.find('.product-name').text(productName);
 
                 $('.t-product').append(newRow);
