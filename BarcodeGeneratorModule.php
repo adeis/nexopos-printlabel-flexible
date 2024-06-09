@@ -17,6 +17,7 @@ class BarcodeGeneratorModule extends Module
                     'label'   =>    __('Bulk Label Print'),
                     'icon'    =>    'las la-print',
                     'href'    =>    route('bc.print-labels'),
+                    'permissions' => [ 'nexopos.create.products-labels' ],
                 ]
             ]);
 
