@@ -14,7 +14,7 @@ class BarcodeGeneratorModule extends Module
         Hook::addFilter('ns-dashboard-menus', function ($menus) {
             $menus    =   array_insert_after($menus, 'inventory', [
                 'foobar'    =>    [
-                    'label'   =>    __('Bulk Label Print'),
+                    'label'   =>    __('Print Bulk Labels'),
                     'icon'    =>    'las la-print',
                     'href'    =>    route('bc.print-labels'),
                     'permissions' => [ 'nexopos.create.products-labels' ],
