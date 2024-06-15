@@ -17,7 +17,7 @@
 		</ns-print-label>
 		*/
 		?>
-		<form action="" name="form" id="form">
+		<form action="" name="form" id="form" target="_blank">
 
 
 		<div class="row">
@@ -118,8 +118,8 @@
 		</div>
 		<div class="row">
 			<div class="col-md-2">
-				<button id="btn-preview" target="_blank" name="btn" value="preview" class="btn btn-primary">{{__('Preview')}}</button>
-				<button id="btn-print" target="_blank" name="btn" value="print" class="btn btn-primary">{{__('Print')}}</button>
+				<button id="btn-preview" name="btn" value="preview" class="btn btn-primary">{{__('Preview')}}</button>
+				<button id="btn-print" type="submit" name="btn" value="print" class="btn btn-primary">{{__('Print')}}</button>
 			</div>
 		</div>
 	</div>
@@ -208,6 +208,14 @@ table.t-product td {
 			
 		});
 
+		// jQuery UI solved select2 on dialog
+		if ($.ui && $.ui.dialog && $.ui.dialog.prototype._allowInteraction) {
+			var ui_dialog_interaction = $.ui.dialog.prototype._allowInteraction;
+			$.ui.dialog.prototype._allowInteraction = function(e) {
+				if ($(e.target).closest('.select2-dropdown').length) return true;
+				return ui_dialog_interaction.apply(this, arguments);
+    		};
+		}
 		// Inisialisasi modal jQuery UI
         $("#productModal").dialog({
             autoOpen: false,
