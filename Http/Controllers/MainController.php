@@ -79,6 +79,10 @@ class MainController extends DashboardController
         } else {
             $productIds = explode(',', $request->get('products', ''));
         }
+        $isEmptyProductIndication = count($productIds) == 1 && (isset($productIds[0]) && empty(trim($productIds[0])));
+        if(empty($productIds) || $isEmptyProductIndication) {
+            die(__('No product selected'));
+        }
         $isCustomSize = $request->get('size_page_custom', "off") == 'on';
         if($isCustomSize) {
             $format = [
