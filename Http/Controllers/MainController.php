@@ -196,7 +196,7 @@ class MainController extends DashboardController
                     $html .= '<small>';
                     if(in_array('name', $barcodeView)) {
                         $name = $barcodeNames[$index];
-                        $html .= "$name <br>";
+                        $html .= "$name";
                     }
                     if(in_array('price', $barcodeView)) {
                         $price = $barcodePrices[$index];
